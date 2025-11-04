@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Login')}"></head>
+
+<body>
+    
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4" style="margin-top: 10vh;">
+                
+                <div class="text-center">
+                    <img th:src="@{/img/logo.png}" alt="Logo TaskManaging" class="logo-login" />
+                </div>
+                
+                <h1 class="text-center mb-4 visually-hidden">TaskManaging</h1>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title text-center mb-0">Login</h3>
+                    </div>
+                    <div class="card-body p-4">
+
+                        <div th:if="${param.error}" class="alert alert-danger">
+                            Email ou senha inválidos.
+                        </div>
+                        <div th:if="${param.logout}" class="alert alert-success">
+                            Você foi desconectado.
+                        </div>
+                        <div th:if="${param.success}" class="alert alert-success">
+                            Cadastro realizado! Faça o login.
+                        </div>
+                        
+                        <form th:action="@{/login}" method="post">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Email:</label>
+                                <input type="text" id="username" name="username" class="form-control form-control-lg" autofocus="autofocus" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Senha:</label>
+                                <input type="password" id="password" name="password" class="form-control form-control-lg" />
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center">
+                        Não tem uma conta? <a th:href="@{/cadastro}">Cadastre-se aqui</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

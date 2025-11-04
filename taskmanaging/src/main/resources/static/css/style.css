@@ -1,0 +1,107 @@
+:root {
+    --cor-fundo: #1a1a1a;
+    --cor-fundo-card: #2b2b2b;
+    --cor-borda: #444;
+    --cor-texto-principal: #f0f0f0;
+    --cor-texto-secundario: #a0a0a0;
+    --cor-primaria-logo: #76c8f2;
+    --cor-primaria-hover: #5aaddb;
+    --cor-secundaria-logo: #4A5568;
+}
+
+body {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto-principal);
+    font-size: 1.1rem;
+}
+
+.container-principal {
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+a {
+    color: var(--cor-primaria-logo);
+}
+a:hover {
+    color: var(--cor-primaria-hover);
+}
+
+.btn-primary {
+    background-color: var(--cor-primaria-logo);
+    border-color: var(--cor-primaria-logo);
+    color: #000;
+}
+.btn-primary:hover {
+    background-color: var(--cor-primaria-hover);
+    border-color: var(--cor-primaria-hover);
+    color: #000;
+}
+
+.btn-outline-secondary {
+    border-color: var(--cor-secundaria-logo);
+    color: var(--cor-texto-secundario);
+}
+.btn-outline-secondary:hover {
+    background-color: var(--cor-secundaria-logo);
+    color: var(--cor-texto-principal);
+}
+
+.card {
+    background-color: var(--cor-fundo-card);
+    border: 1px solid var(--cor-borda);
+    margin-bottom: 20px;
+}
+
+.card-header, .card-body, .card-footer {
+    border-color: var(--cor-borda) !important;
+}
+
+.card-header {
+    background-color: var(--cor-secundaria-logo);
+    color: var(--cor-texto-principal);
+}
+
+.form-control, .form-select {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto-principal);
+    border: 1px solid var(--cor-borda);
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto-principal);
+    border-color: var(--cor-primaria-logo);
+    box-shadow: 0 0 0 0.25rem rgba(118, 200, 242, 0.25);
+}
+
+.form-control::placeholder {
+    color: var(--cor-texto-secundario);
+}
+
+.list-group-item {
+    background-color: var(--cor-fundo-card);
+    border-color: var(--cor-borda);
+    color: var(--cor-texto-principal);
+    padding: 1rem 1.25rem;
+}
+
+.tarefa-concluida {
+    background-color: #3a3a3a;
+}
+
+.tarefa-concluida .tarefa-titulo {
+    text-decoration: line-through;
+    color: var(--cor-texto-secundario);
+}
+
+a:focus, button:focus, input:focus, select:focus {
+    outline: 3px solid var(--cor-primaria-logo) !important;
+    outline-offset: 2px;
+}
+
+.logo-login {
+    width: 100px;
+    height: auto;
+    margin-bottom: 1rem;
+}

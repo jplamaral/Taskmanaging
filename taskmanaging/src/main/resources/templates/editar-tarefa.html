@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Editar Tarefa')}"></head>
+
+<body>
+    <div class="container container-principal">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="h3 mb-0">Editar Tarefa</h1>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/tarefas/editar}" th:object="${tarefa}" method="post">
+                            
+                            <input type="hidden" th:field="*{id_tarefa}" />
+                            <input type="hidden" th:field="*{status}" />
+
+                            <div class="mb-3">
+                                <label for="titulo" class="form-label">Título:</label>
+                                <input type="text" id="titulo" th:field="*{titulo}" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="descricao" class="form-label">Descrição:</label>
+                                <textarea id="descricao" th:field="*{descricao}" rows="3" class="form-control"></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="data_fim" class="form-label">Data Fim:</label>
+                                    <input type="date" id="data_fim" th:field="*{data_fim}" th:value="${#dates.format(tarefa.data_fim, 'yyyy-MM-dd')}" class="form-control" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="prioridade" class="form-label">Prioridade:</label>
+                                    <select id="prioridade" th:field="*{prioridade}" class="form-select">
+                                        <option value="baixa">Baixa</option>
+                                        <option value="media">Média</option>
+                                        <option value="alta">Alta</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="rotina" class="form-label">Associar à Rotina (Opcional):</label>
+                                <select id="rotina" th:field="*{rotina.id_rotina}" class="form-select">
+                                    <option value="">Nenhuma</option>
+                                    <option th:each="rotina : ${rotinas}"
+                                            th:value="${rotina.id_rotina}"
+                                            th:text="${rotina.nome}">
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                            <a th:href="@{/}" class="btn btn-secondary">Cancelar</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

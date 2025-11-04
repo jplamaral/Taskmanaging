@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Dashboard')}"></head>
+
+<body>
+    
+    <header class="py-3 mb-4 border-bottom bg-dark">
+        <div class="container container-principal d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">Meu Dashboard</h1>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-outline-light">Sair</button>
+            </form>
+        </div>
+    </header>
+    
+    <div class="container container-principal">
+        <div class="row">
+            
+            <div class="col-md-4">
+                
+                <div class="d-grid gap-2 mb-3">
+                    <button id="btn-toggle-tarefa" class="btn btn-lg btn-primary">Adicionar Nova Tarefa</button>
+                    <button id="btn-toggle-rotina" class="btn btn-outline-secondary">Adicionar Nova Rotina</button>
+                </div>
+
+                <div id="form-nova-tarefa" class="card" style="display: none;">
+                    <div class="card-body">
+                        <h4 class="card-title">Nova Tarefa</h4>
+                        <form th:action="@{/tarefas/criar}" th:object="${novaTarefa}" method="post">
+                            <div class="mb-3">
+                                <label for="titulo" class="form-label">Título:</label>
+                                <input type="text" id="titulo" th:field="*{titulo}" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="descricao" class="form-label">Descrição:</label>
+                                <textarea id="descricao" th:field="*{descricao}" rows="3" class="form-control"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="prioridade" class="form-label">Prioridade:</label>
+                                <select id="prioridade" th:field="*{prioridade}" class="form-select">
+                                    <option value="media">Média</option>
+                                    <option value="baixa">Baixa</option>
+                                    <option value="alta">Alta</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="rotina" class="form-label">Associar à Rotina:</label>
+                                <select id="rotina" th:field="*{rotina.id_rotina}" class="form-select">
+                                    <option value="">Nenhuma (Tarefa Avulsa)</option>
+                                    <option th:each="r : ${rotinas}" th:value="${r.id_rotina}" th:text="${r.nome}"></option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success">Adicionar</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="form-nova-rotina" class="card" style="display: none;">
+                    <div class="card-body">
+                        <h4 class="card-title">Nova Rotina</h4>
+                        <form th:action="@{/rotinas/criar}" th:object="${novaRotina}" method="post">
+                            <div class="mb-3">
+                                <label for="nome" class="form-label">Nome da Rotina:</label>
+                                <input type="text" id="nome" th:field="*{nome}" class="form-control" required />
+                            </div>
+                            <button type="submit" class="btn btn-success">Criar Rotina</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                
+                <h2>Minhas Rotinas</h2>
+                <div th:if="${#lists.isEmpty(rotinas)}">
+                    <p class="text-white-50">Você ainda não criou nenhuma rotina.</p>
+                </div>
+                
+                <div th:each="rotina : ${rotinas}" class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="h5 mb-0" th:text="${rotina.nome}">Nome da Rotina</h3>
+                        <a th:href="@{/rotinas/deletar/{id}(id=${rotina.id_rotina})}" 
+                           class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Excluir esta rotina também excluirá TODAS as tarefas associadas. Tem certeza?');">
+                           Excluir Rotina
+                        </a>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li th:each="tarefa : ${rotina.tarefas}" 
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                            th:classappend="${tarefa.status == 'concluída'} ? 'tarefa-concluida' : ''">
+                            
+                            <div>
+                                <h5 class="mb-1 tarefa-titulo" th:text="${tarefa.titulo}">Título da Tarefa</h5>
+                                <small th:text="${tarefa.prioridade}">Prioridade</small>
+                            </div>
+                            
+                            <div class="acoes">
+                                <a th:if="${tarefa.status == 'pendente'}" th:href="@{/tarefas/concluir/{id}(id=${tarefa.id_tarefa})}" class="btn btn-sm btn-outline-success">Concluir</a>
+                                <a th:href="@{/tarefas/editar/{id}(id=${tarefa.id_tarefa})}" class="btn btn-sm btn-outline-warning">Editar</a>
+                                <a th:href="@{/tarefas/deletar/{id}(id=${tarefa.id_tarefa})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?');">Excluir</a>
+                            </div>
+                        </li>
+                        <li th:if="${#lists.isEmpty(rotina.tarefas)}" class="list-group-item">
+                            <span class="text-white-50">Nenhuma tarefa nesta rotina.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <h2 class="mt-4">Tarefas Avulsas</h2>
+                
+                <ul class="list-group">
+                    <div th:each="tarefa : ${tarefas}" th:if="${tarefa.rotina == null}">
+                        <li class="list-group-item d-flex justify-content-between align-items-center"
+                            th:classappend="${tarefa.status == 'concluída'} ? 'tarefa-concluida' : ''">
+                            
+                            <div>
+                                <h5 class="mb-1 tarefa-titulo" th:text="${tarefa.titulo}">Título da Tarefa</h5>
+                                <small th:text="${tarefa.prioridade}">Prioridade</small>
+                            </div>
+                            
+                            <div class="acoes">
+                                <a th:if="${tarefa.status == 'pendente'}" th:href="@{/tarefas/concluir/{id}(id=${tarefa.id_tarefa})}" class="btn btn-sm btn-outline-success">Concluir</a>
+                                <a th:href="@{/tarefas/editar/{id}(id=${tarefa.id_tarefa})}" class="btn btn-sm btn-outline-warning">Editar</a>
+                                <a th:href="@{/tarefas/deletar/{id}(id=${tarefa.id_tarefa})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?');">Excluir</a>
+                            </div>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
