@@ -28,44 +28,45 @@ public class UsuarioController {
     @Autowired
     private RotinaService rotinaService;
 
-    @GetMapping("/login")
-    public String showLoginPage() {
-        return "login";
-    }
-
-    @GetMapping("/cadastro")
-    public String showCadastroPage(Model model) {
-        model.addAttribute("usuario", new Usuario()); 
-        return "cadastro";
+    @GetMapping("/auth")
+    public String showAuthPage(Model model) {
+        model.addAttribute("usuario", new Usuario());
+        return "auth";
     }
 
     @PostMapping("/cadastro")
-    public String processarCadastro(@Valid @ModelAttribute("usuario") Usuario usuario, 
-                                    BindingResult result, Model model) {
-        
-        if (result.hasErrors()) {
-            return "cadastro";
-        }
+public String processarCadastro(@Valid @ModelAttribute("usuario") Usuario usuario,
+                                BindingResult result, Model model) {
 
-        try {
-            usuarioService.cadastrarUsuario(usuario);
-        } catch (RuntimeException e) {
-            result.rejectValue("email", null, "Este email já está em uso.");
-            return "cadastro";
-        }
-
-        return "redirect:/login?success"; 
+    if (result.hasErrors()) {
+        model.addAttribute("errorMessage", "Verifique os campos e tente novamente.");
+        model.addAttribute("showCadastro", true);
+        return "auth";
     }
+
+    try {
+        usuarioService.cadastrarUsuario(usuario);
+    } catch (RuntimeException e) {
+        model.addAttribute("errorMessage", e.getMessage());
+        model.addAttribute("showCadastro", true);
+        return "auth";
+    } catch (Exception e) {
+        model.addAttribute("errorMessage", "Ocorreu um erro inesperado ao cadastrar. Tente novamente.");
+        model.addAttribute("showCadastro", true);
+        return "auth";
+    }
+
+    return "redirect:/auth?success";
+}
 
     @GetMapping("/")
     public String showDashboard(Model model) {
-        
+
         List<Tarefa> tarefas = tarefaService.getTarefasDoUsuarioLogado();
         List<Rotina> rotinas = rotinaService.getRotinasDoUsuarioLogado();
-        
+
         model.addAttribute("tarefas", tarefas);
         model.addAttribute("rotinas", rotinas);
-        
         model.addAttribute("novaTarefa", new Tarefa());
         model.addAttribute("novaRotina", new Rotina());
 

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Login ou Cadastro')}"></head>
+
+<body>
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div class="row w-100" style="max-width: 1100px;">
+        <div class="col-md-6 bg-white shadow rounded-4 p-5">
+
+            <!-- Avisos de erro e sucesso -->
+            <div th:if="${errorMessage}" class="alert alert-danger text-center rounded-pill mb-4" role="alert">
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <div th:if="${param.success}" class="alert alert-success text-center rounded-pill mb-4" role="alert">
+                Cadastro realizado com sucesso! Faça o login abaixo.
+            </div>
+
+            <div class="text-center mb-4">
+                <img th:src="@{/img/logo.png}" alt="Logo TaskManaging" width="90" />
+            </div>
+
+            <div class="d-flex justify-content-center mb-4">
+                <h3 id="btn-login" class="me-4 active-tab" style="cursor:pointer;">Log In</h3>
+                <h3 id="btn-cadastro" style="cursor:pointer;">Criar conta</h3>
+            </div>
+
+            <!-- Formulário de Login -->
+            <form id="form-login" th:action="@{/login}" method="post">
+                <h5 class="mb-3 text-secondary">Entre com seus dados</h5>
+                <div class="mb-3">
+                    <input type="email" name="username" class="form-control form-control-lg rounded-pill" placeholder="Email" required>
+                </div>
+               <div class="mb-3 position-relative">
+                    <input type="password" id="password-login" name="password" class="form-control form-control-lg rounded-pill pe-5" placeholder="Senha" required>
+                    <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3 toggle-password" data-target="password-login" style="cursor:pointer;"></i>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary rounded-pill py-2">Entrar</button>
+                </div>
+                <p class="text-center mt-3"><a href="#" class="text-muted small">Esqueceu a senha?</a></p>
+            </form>
+
+            <!-- Formulário de Cadastro -->
+            <form id="form-cadastro" th:action="@{/cadastro}" th:object="${usuario}" method="post" style="display:none;">
+                <h5 class="mb-3 text-secondary">Crie sua conta</h5>
+
+                <div class="mb-3">
+                    <input type="text" th:field="*{nome}" class="form-control form-control-lg rounded-pill" placeholder="Nome" required>
+                </div>
+
+                <div class="mb-3">
+                    <input type="email" th:field="*{email}" class="form-control form-control-lg rounded-pill" placeholder="Email" required>
+                </div>
+
+                <div class="mb-3 position-relative">
+                    <input type="password" id="senha" th:field="*{senha}" class="form-control form-control-lg rounded-pill pe-5" placeholder="Senha" required>
+                    <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3 toggle-password" data-target="senha" style="cursor:pointer;"></i>
+                </div>
+
+                <div class="mb-3 position-relative">
+                    <input type="password" id="confirmarSenha" class="form-control form-control-lg rounded-pill pe-5" placeholder="Confirmar senha" required>
+                    <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3 toggle-password" data-target="confirmarSenha" style="cursor:pointer;"></i>
+                    <small id="erroSenha" class="text-danger mt-1" style="display:none;">As senhas não coincidem</small>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary rounded-pill py-2">Cadastrar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Lado direito -->
+        <div class="col-md-6 d-flex flex-column justify-content-center align-items-center bg-light text-center p-5">
+            <h3 class="fw-bold mb-4">TaskManaging:</h3>
+            <p class="fs-5 text-secondary">O site de organização pessoal<br>focado em estudantes com TDAH.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Alternar entre abas Login e Cadastro
+    const btnLogin = document.getElementById('btn-login');
+    const btnCadastro = document.getElementById('btn-cadastro');
+    const formLogin = document.getElementById('form-login');
+    const formCadastro = document.getElementById('form-cadastro');
+
+    btnLogin.addEventListener('click', () => {
+        formLogin.style.display = 'block';
+        formCadastro.style.display = 'none';
+        btnLogin.classList.add('active-tab');
+        btnCadastro.classList.remove('active-tab');
+    });
+
+    btnCadastro.addEventListener('click', () => {
+        formLogin.style.display = 'none';
+        formCadastro.style.display = 'block';
+        btnCadastro.classList.add('active-tab');
+        btnLogin.classList.remove('active-tab');
+    });
+
+    // Validação de confirmação de senha
+    const senhaInput = document.getElementById('senha');
+    const confirmarSenhaInput = document.getElementById('confirmarSenha');
+    const erroSenha = document.getElementById('erroSenha');
+    const formCadastroEl = document.getElementById('form-cadastro');
+
+    formCadastroEl.addEventListener('submit', function(event) {
+        if (senhaInput.value !== confirmarSenhaInput.value) {
+            event.preventDefault();
+            erroSenha.style.display = 'block';
+            confirmarSenhaInput.classList.add('is-invalid');
+        } else {
+            erroSenha.style.display = 'none';
+            confirmarSenhaInput.classList.remove('is-invalid');
+        }
+    });
+
+    // Mostrar/ocultar senhas
+const toggleIcons = document.querySelectorAll('.toggle-password');
+toggleIcons.forEach(icon => {
+    icon.addEventListener('click', () => {
+        const targetId = icon.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    });
+});
+
+
+   
+    window.addEventListener('DOMContentLoaded', () => {
+        const showCadastro = /*[[${showCadastro}]]*/ false;
+        if (showCadastro) {
+            formLogin.style.display = 'none';
+            formCadastro.style.display = 'block';
+            btnCadastro.classList.add('active-tab');
+            btnLogin.classList.remove('active-tab');
+        }
+    });
+
+</script>
+
+<style>
+    .active-tab {
+        border-bottom: 3px solid #76c8f2;
+        padding-bottom: 4px;
+        color: #000;
+    }
+
+    #btn-login,
+    #btn-cadastro {
+        transition: color 0.3s, border-bottom 0.3s;
+    }
+
+    #btn-login:hover,
+    #btn-cadastro:hover {
+        color: #76c8f2;
+    }
+
+    .alert {
+        animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

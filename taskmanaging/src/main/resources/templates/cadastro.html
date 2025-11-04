@@ -22,7 +22,7 @@
 
                     <div class="card-body p-4">
 
-                        <!-- Mensagens de feedback -->
+                       
                         <div th:if="${param.error}" class="alert alert-danger">
                             Email já cadastrado ou dados inválidos.
                         </div>
@@ -30,7 +30,6 @@
                             Cadastro realizado! Faça o login.
                         </div>
 
-                        <!-- Formulário corrigido -->
                         <form th:action="@{/cadastro}" th:object="${usuario}" method="post">
                             <div class="mb-3">
                                 <label for="nome" class="form-label">Nome:</label>

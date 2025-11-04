@@ -23,28 +23,26 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login").permitAll()
-                .requestMatchers("/cadastro").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/img/**").permitAll() 
-                .anyRequest().authenticated() 
-            )
-            .formLogin(form -> form
-                .loginPage("/login") 
-                .loginProcessingUrl("/login") 
-                .defaultSuccessUrl("/", true) 
-                .permitAll() 
-            )
-            .logout(logout -> logout
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) 
-                .logoutSuccessUrl("/login?logout") 
-                .permitAll()
-            )
-            .csrf(csrf -> csrf.disable()); 
-            
-        return http.build();
-    }
+  @Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/auth", "/cadastro", "/login", "/css/**", "/js/**", "/img/**").permitAll()
+            .anyRequest().authenticated()
+        )
+        .formLogin(form -> form
+            .loginPage("/auth")
+            .loginProcessingUrl("/login")
+            .defaultSuccessUrl("/", true)
+            .permitAll()
+        )
+        .logout(logout -> logout
+            .logoutSuccessUrl("/auth?logout")
+            .permitAll()
+        )
+        .csrf(csrf -> csrf.disable()); 
+
+    return http.build();
+}
+
 }

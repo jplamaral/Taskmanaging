@@ -105,3 +105,12 @@ a:focus, button:focus, input:focus, select:focus {
     height: auto;
     margin-bottom: 1rem;
 }
+
+.toggle-password {
+    color: #6c757d;
+    transition: color 0.3s;
+}
+
+.toggle-password:hover {
+    color: #76c8f2;
+}
