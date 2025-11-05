@@ -12,6 +12,29 @@
                 <button type="submit" class="btn btn-outline-light">Sair</button>
             </form>
         </div>
+
+        <!-- Botão de acesso ao perfil -->
+<div class="position-absolute top-0 end-0 m-3 d-flex align-items-center">
+    <a href="/perfil" class="d-flex align-items-center text-decoration-none text-dark">
+        
+        <!-- Foto do usuário, se existir -->
+        <img th:if="${usuario.fotoPerfil != null}"
+             th:src="@{'/usuario/foto/' + ${usuario.id_usuario}}"
+             alt="Foto do usuário"
+             class="rounded-circle me-2 shadow-sm"
+             style="width: 40px; height: 40px; object-fit: cover;">
+        
+        <!-- Foto padrão, se o usuário não tiver imagem -->
+        <img th:if="${usuario.fotoPerfil == null}"
+             src="/img/default-avatar.png"
+             alt="Usuário padrão"
+             class="rounded-circle me-2 shadow-sm"
+             style="width: 40px; height: 40px; object-fit: cover;">
+
+        <span class="fw-semibold">Meu Perfil</span>
+    </a>
+</div>
+
     </header>
     
     <div class="container container-principal">

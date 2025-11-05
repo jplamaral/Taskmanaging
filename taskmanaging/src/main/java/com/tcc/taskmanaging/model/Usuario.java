@@ -30,6 +30,11 @@ public class Usuario {
     @Size(max = 255)
     private String senha;
 
+    @Lob
+    @Column(name = "foto_perfil", columnDefinition = "LONGBLOB")
+    private byte[] fotoPerfil;
+
+
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Tarefa> tarefas;
 
@@ -48,4 +53,6 @@ public class Usuario {
     public void setTarefas(Set<Tarefa> tarefas) { this.tarefas = tarefas; }
     public Set<Rotina> getRotinas() { return rotinas; }
     public void setRotinas(Set<Rotina> rotinas) { this.rotinas = rotinas; }
+    public byte[] getFotoPerfil() { return fotoPerfil; }
+    public void setFotoPerfil(byte[] fotoPerfil) { this.fotoPerfil = fotoPerfil; }
 }
