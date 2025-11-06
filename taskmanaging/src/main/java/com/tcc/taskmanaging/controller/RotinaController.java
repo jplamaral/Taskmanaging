@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; // Importar
 
 @Controller
 public class RotinaController {
@@ -22,27 +23,29 @@ public class RotinaController {
         this.rotinaService = rotinaService;
     }
 
+    // --- CORREÇÃO APLICADA AQUI ---
     @PostMapping("/rotinas/criar")
-    public String criarRotina(@ModelAttribute Rotina rotina) {
+    public String criarRotina(@ModelAttribute("novaRotina") Rotina rotina, RedirectAttributes redirectAttributes) {
         log.info("POST /rotinas/criar chamado com nome: {}", rotina.getNome());
         try {
             rotinaService.criarRotina(rotina);
         } catch (Exception e) {
             log.error("Erro ao criar rotina", e);
-            // Idealmente, aqui você adicionaria um RedirectAttributes para mostrar o erro na tela
-            // Ex: redirectAttributes.addFlashAttribute("error", "Erro ao criar rotina");
+            // Adiciona feedback de erro
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar rotina: " + e.getMessage());
         }
         return "redirect:/";
     }
 
+    // Apenas adicionei o RedirectAttributes para feedback
     @GetMapping("/rotinas/deletar/{id}")
-    public String deletarRotina(@PathVariable Long id) {
+    public String deletarRotina(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         log.info("GET /rotinas/deletar/{} chamado", id);
         try {
             rotinaService.deleteRotina(id);
         } catch (Exception e) {
             log.error("Erro ao deletar rotina ID: {}", id, e);
-            // Adicionar RedirectAttributes aqui também
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao deletar rotina: " + e.getMessage());
         }
         return "redirect:/";
     }

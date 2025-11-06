@@ -38,7 +38,7 @@
                                 <input type="date" id="dataFim" th:field="*{dataFim}" class="form-control" />
                             </div>
                             <div class="mb-3">
-                                <label for="prioridade" class_8="form-label">Prioridade:</label>
+                                <label for="prioridade" class="form-label">Prioridade:</label>
                                 <select id="prioridade" th:field="*{prioridade}" class="form-select">
                                     <option value="media">Média</option>
                                     <option value="baixa">Baixa</option>
@@ -47,7 +47,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="rotina" class="form-label">Associar à Rotina:</label>
-                                <select id="rotina" th:field="*{rotina.id}" class="form-select">
+                                <select id="rotina" th:field="*{idRotina}" class="form-select">
                                     <option value="">Nenhuma (Tarefa Avulsa)</option>
                                     <option th:each="r : ${rotinas}" th:value="${r.id}" th:text="${r.nome}"></option>
                                 </select>

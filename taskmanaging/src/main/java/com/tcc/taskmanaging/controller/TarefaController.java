@@ -31,9 +31,14 @@ public class TarefaController {
         this.rotinaService = rotinaService;
     }
 
+    // --- VERIFIQUE ESTA LINHA ---
     @PostMapping("/tarefas/criar")
-    public String criarTarefa(@ModelAttribute Tarefa tarefa, RedirectAttributes redirectAttributes) {
+    public String criarTarefa(@ModelAttribute("novaTarefa") Tarefa tarefa, RedirectAttributes redirectAttributes) {
         log.info("POST /tarefas/criar chamado com título: {}", tarefa.getTitulo());
+        
+        // Esta linha é crucial para o debug:
+        log.info("ID da Rotina recebido do formulário: {}", tarefa.getIdRotina()); 
+
         try {
             tarefaService.criarTarefa(tarefa);
         } catch (Exception e) {
@@ -43,6 +48,8 @@ public class TarefaController {
         return "redirect:/";
     }
 
+    // ... (resto do código)
+    
     @GetMapping("/tarefas/concluir/{id}")
     public String concluirTarefa(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         log.info("GET /tarefas/concluir/{} chamado", id);
@@ -74,7 +81,6 @@ public class TarefaController {
             Tarefa tarefa = tarefaService.getTarefaById(id);
             List<Rotina> rotinas = rotinaService.getRotinasDoUsuarioLogado();
             
-            // Popula o campo transient para o formulário
             if (tarefa.getRotina() != null) {
                 tarefa.setIdRotina(tarefa.getRotina().getId());
             }
@@ -85,12 +91,12 @@ public class TarefaController {
             return "editar-tarefa";
         } catch (Exception e) {
             log.error("Erro ao carregar página de edição para tarefa ID: {}", id, e);
-            return "redirect:/";
+            return "redirect:/"; 
         }
     }
 
     @PostMapping("/tarefas/editar")
-    public String processarEdicao(@ModelAttribute Tarefa tarefa, RedirectAttributes redirectAttributes) {
+    public String processarEdicao(@ModelAttribute("tarefa") Tarefa tarefa, RedirectAttributes redirectAttributes) {
         log.info("POST /tarefas/editar chamado para tarefa ID: {}", tarefa.getId());
         try {
             tarefaService.atualizarTarefa(tarefa);
