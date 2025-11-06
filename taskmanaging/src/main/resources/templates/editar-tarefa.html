@@ -4,6 +4,9 @@
 <head th:replace="~{fragments/header :: head('Editar Tarefa')}"></head>
 
 <body>
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
     <div class="container container-principal">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -14,22 +17,24 @@
                     <div class="card-body">
                         <form th:action="@{/tarefas/editar}" th:object="${tarefa}" method="post">
                             
-                            <input type="hidden" th:field="*{id_tarefa}" />
+                            <input type="hidden" th:field="*{id}" />
                             <input type="hidden" th:field="*{status}" />
 
                             <div class="mb-3">
                                 <label for="titulo" class="form-label">Título:</label>
                                 <input type="text" id="titulo" th:field="*{titulo}" class="form-control" required />
                             </div>
+            
                             <div class="mb-3">
                                 <label for="descricao" class="form-label">Descrição:</label>
                                 <textarea id="descricao" th:field="*{descricao}" rows="3" class="form-control"></textarea>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="data_fim" class="form-label">Data Fim:</label>
-                                    <input type="date" id="data_fim" th:field="*{data_fim}" th:value="${#dates.format(tarefa.data_fim, 'yyyy-MM-dd')}" class="form-control" />
+                                    <label for="dataFim" class="form-label">Data Fim:</label>
+                                    <input type="date" id="dataFim" th:field="*{dataFim}" th:value="${#temporals.format(tarefa.dataFim, 'yyyy-MM-dd')}" class="form-control" />
                                 </div>
+        
                                 <div class="col-md-6 mb-3">
                                     <label for="prioridade" class="form-label">Prioridade:</label>
                                     <select id="prioridade" th:field="*{prioridade}" class="form-select">
@@ -41,15 +46,16 @@
                             </div>
                             <div class="mb-3">
                                 <label for="rotina" class="form-label">Associar à Rotina (Opcional):</label>
-                                <select id="rotina" th:field="*{rotina.id_rotina}" class="form-select">
+            
+                                <select id="rotina" th:field="*{rotina.id}" class="form-select">
                                     <option value="">Nenhuma</option>
                                     <option th:each="rotina : ${rotinas}"
-                                            th:value="${rotina.id_rotina}"
+                                            th:value="${rotina.id}"
                                             th:text="${rotina.nome}">
                                     </option>
                                 </select>
                             </div>
-                            
+                 
                             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                             <a th:href="@{/}" class="btn btn-secondary">Cancelar</a>
                         </form>

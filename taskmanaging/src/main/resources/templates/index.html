@@ -5,39 +5,13 @@
 
 <body>
     
-    <header class="py-3 mb-4 border-bottom bg-dark">
-        <div class="container container-principal d-flex justify-content-between align-items-center">
-            <h1 class="h3 mb-0">Meu Dashboard</h1>
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="btn btn-outline-light">Sair</button>
-            </form>
-        </div>
-
-        <!-- Botão de acesso ao perfil -->
-<div class="position-absolute top-0 end-0 m-3 d-flex align-items-center">
-    <a href="/perfil" class="d-flex align-items-center text-decoration-none text-dark">
-        
-        <!-- Foto do usuário, se existir -->
-        <img th:if="${usuario.fotoPerfil != null}"
-             th:src="@{'/usuario/foto/' + ${usuario.id_usuario}}"
-             alt="Foto do usuário"
-             class="rounded-circle me-2 shadow-sm"
-             style="width: 40px; height: 40px; object-fit: cover;">
-        
-        <!-- Foto padrão, se o usuário não tiver imagem -->
-        <img th:if="${usuario.fotoPerfil == null}"
-             src="/img/default-avatar.png"
-             alt="Usuário padrão"
-             class="rounded-circle me-2 shadow-sm"
-             style="width: 40px; height: 40px; object-fit: cover;">
-
-        <span class="fw-semibold">Meu Perfil</span>
-    </a>
-</div>
-
-    </header>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     
     <div class="container container-principal">
+        
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+        <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
+
         <div class="row">
             
             <div class="col-md-4">
@@ -47,7 +21,7 @@
                     <button id="btn-toggle-rotina" class="btn btn-outline-secondary">Adicionar Nova Rotina</button>
                 </div>
 
-                <div id="form-nova-tarefa" class="card" style="display: none;">
+                <div id="form-nova-tarefa" class="card form-toggle-hidden">
                     <div class="card-body">
                         <h4 class="card-title">Nova Tarefa</h4>
                         <form th:action="@{/tarefas/criar}" th:object="${novaTarefa}" method="post">
@@ -60,7 +34,11 @@
                                 <textarea id="descricao" th:field="*{descricao}" rows="3" class="form-control"></textarea>
                             </div>
                             <div class="mb-3">
-                                <label for="prioridade" class="form-label">Prioridade:</label>
+                                <label for="dataFim" class="form-label">Data Fim:</label>
+                                <input type="date" id="dataFim" th:field="*{dataFim}" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="prioridade" class_8="form-label">Prioridade:</label>
                                 <select id="prioridade" th:field="*{prioridade}" class="form-select">
                                     <option value="media">Média</option>
                                     <option value="baixa">Baixa</option>
@@ -69,9 +47,9 @@
                             </div>
                             <div class="mb-3">
                                 <label for="rotina" class="form-label">Associar à Rotina:</label>
-                                <select id="rotina" th:field="*{rotina.id_rotina}" class="form-select">
+                                <select id="rotina" th:field="*{rotina.id}" class="form-select">
                                     <option value="">Nenhuma (Tarefa Avulsa)</option>
-                                    <option th:each="r : ${rotinas}" th:value="${r.id_rotina}" th:text="${r.nome}"></option>
+                                    <option th:each="r : ${rotinas}" th:value="${r.id}" th:text="${r.nome}"></option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-success">Adicionar</button>
@@ -79,7 +57,7 @@
                     </div>
                 </div>
 
-                <div id="form-nova-rotina" class="card" style="display: none;">
+                <div id="form-nova-rotina" class="card form-toggle-hidden">
                     <div class="card-body">
                         <h4 class="card-title">Nova Rotina</h4>
                         <form th:action="@{/rotinas/criar}" th:object="${novaRotina}" method="post">
@@ -97,13 +75,13 @@
                 
                 <h2>Minhas Rotinas</h2>
                 <div th:if="${#lists.isEmpty(rotinas)}">
-                    <p class="text-white-50">Você ainda não criou nenhuma rotina.</p>
+                    <p class="text-muted">Você ainda não criou nenhuma rotina.</p>
                 </div>
                 
                 <div th:each="rotina : ${rotinas}" class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h3 class="h5 mb-0" th:text="${rotina.nome}">Nome da Rotina</h3>
-                        <a th:href="@{/rotinas/deletar/{id}(id=${rotina.id_rotina})}" 
+                        <a th:href="@{/rotinas/deletar/{id}(id=${rotina.id})}" 
                            class="btn btn-sm btn-outline-danger"
                            onclick="return confirm('Excluir esta rotina também excluirá TODAS as tarefas associadas. Tem certeza?');">
                            Excluir Rotina
@@ -120,13 +98,13 @@
                             </div>
                             
                             <div class="acoes">
-                                <a th:if="${tarefa.status == 'pendente'}" th:href="@{/tarefas/concluir/{id}(id=${tarefa.id_tarefa})}" class="btn btn-sm btn-outline-success">Concluir</a>
-                                <a th:href="@{/tarefas/editar/{id}(id=${tarefa.id_tarefa})}" class="btn btn-sm btn-outline-warning">Editar</a>
-                                <a th:href="@{/tarefas/deletar/{id}(id=${tarefa.id_tarefa})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?');">Excluir</a>
+                                <a th:if="${tarefa.status == 'pendente'}" th:href="@{/tarefas/concluir/{id}(id=${tarefa.id})}" class="btn btn-sm btn-outline-success">Concluir</a>
+                                <a th:href="@{/tarefas/editar/{id}(id=${tarefa.id})}" class="btn btn-sm btn-outline-warning">Editar</a>
+                                <a th:href="@{/tarefas/deletar/{id}(id=${tarefa.id})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?');">Excluir</a>
                             </div>
                         </li>
                         <li th:if="${#lists.isEmpty(rotina.tarefas)}" class="list-group-item">
-                            <span class="text-white-50">Nenhuma tarefa nesta rotina.</span>
+                            <span class="text-muted">Nenhuma tarefa nesta rotina.</span>
                         </li>
                     </ul>
                 </div>
@@ -144,9 +122,9 @@
                             </div>
                             
                             <div class="acoes">
-                                <a th:if="${tarefa.status == 'pendente'}" th:href="@{/tarefas/concluir/{id}(id=${tarefa.id_tarefa})}" class="btn btn-sm btn-outline-success">Concluir</a>
-                                <a th:href="@{/tarefas/editar/{id}(id=${tarefa.id_tarefa})}" class="btn btn-sm btn-outline-warning">Editar</a>
-                                <a th:href="@{/tarefas/deletar/{id}(id=${tarefa.id_tarefa})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?');">Excluir</a>
+                                <a th:if="${tarefa.status == 'pendente'}" th:href="@{/tarefas/concluir/{id}(id=${tarefa.id})}" class="btn btn-sm btn-outline-success">Concluir</a>
+                                <a th:href="@{/tarefas/editar/{id}(id=${tarefa.id})}" class="btn btn-sm btn-outline-warning">Editar</a>
+                                <a th:href="@{/tarefas/deletar/{id}(id=${tarefa.id})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?');">Excluir</a>
                             </div>
                         </li>
                     </div>

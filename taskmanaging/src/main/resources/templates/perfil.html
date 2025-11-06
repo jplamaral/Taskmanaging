@@ -2,56 +2,58 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head('Meu Perfil')}"></head>
 
-<body class="bg-light">
+<body>
 
-<!-- Container principal -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
+            
+            <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+            <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
 
             <div class="card shadow-sm border-0 rounded-4">
                 <div class="card-body text-center p-5">
 
-                    <!-- Foto do usuário -->
                     <div class="mb-4 position-relative d-inline-block">
-                        <img th:if="${usuario.fotoPerfil != null}"
-                             th:src="@{'/usuario/foto/' + ${usuario.id_usuario}}"
+                        <img th:if="${usuarioLogado.fotoPerfil != null}"
+                             th:src="@{'/usuario/foto/' + ${usuarioLogado.id}}"
                              alt="Foto do usuário"
-                             class="rounded-circle shadow-sm"
-                             style="width: 120px; height: 120px; object-fit: cover;">
-                        <img th:if="${usuario.fotoPerfil == null}"
-                             src="/img/default-avatar.png"
+                             class="profile-pic-large">
+                        <img th:if="${usuarioLogado.fotoPerfil == null}"
+                             th:src="@{/img/default-avatar.png}"
                              alt="Foto padrão"
-                             class="rounded-circle shadow-sm"
-                             style="width: 120px; height: 120px; object-fit: cover;">
+                             class="profile-pic-large">
                     </div>
 
-                    <h3 class="fw-bold mb-0" th:text="${usuario.nome}">Nome do Usuário</h3>
-                    <p class="text-muted mb-4" th:text="${usuario.email}">email@exemplo.com</p>
+                    <h3 class="fw-bold mb-0" th:text="${usuarioLogado.nome}">Nome do Usuário</h3>
+                    <p class="text-muted mb-4" th:text="${usuarioLogado.email}">email@exemplo.com</p>
 
                     <hr class="my-4">
 
-                    <!-- Formulário de edição -->
-                    <form th:action="@{/usuario/atualizar}" method="post" enctype="multipart/form-data" class="text-start">
+                    <form th:action="@{/usuario/atualizar}" th:object="${usuarioLogado}" method="post" enctype="multipart/form-data" class="text-start">
 
+                        <input type="hidden" th:field="*{id}" />
+                        
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Nome</label>
-                            <input type="text" name="nome" th:value="${usuario.nome}" class="form-control rounded-pill" required>
+                            <label for="nome" class="form-label fw-semibold">Nome</label>
+                            <input type="text" id="nome" th:field="*{nome}" class="form-control rounded-pill" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Email</label>
-                            <input type="email" name="email" th:value="${usuario.email}" class="form-control rounded-pill" required>
+                            <label for="email" class="form-label fw-semibold">Email</label>
+                            <input type="email" id="email" th:field="*{email}" class="form-control rounded-pill" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Foto de perfil</label>
-                            <input type="file" name="fotoPerfil" accept="image/*" class="form-control rounded-pill">
+                            <label for="fotoPerfil" class="form-label fw-semibold">Foto de perfil (Opcional)</label>
+                            <input type="file" id="fotoPerfil" name="fotoUpload" accept="image/*" class="form-control rounded-pill">
                         </div>
 
                         <div class="text-center mt-4">
                             <button type="submit" class="btn btn-primary rounded-pill px-4">Salvar alterações</button>
-                            <a href="/" class="btn btn-outline-secondary rounded-pill px-4 ms-2">Voltar</a>
+                            <a th:href="@{/}" class="btn btn-outline-secondary rounded-pill px-4 ms-2">Voltar</a>
                         </div>
                     </form>
 
