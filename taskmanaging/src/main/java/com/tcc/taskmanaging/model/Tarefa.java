@@ -33,24 +33,16 @@ public class Tarefa {
     @JoinColumn(name = "id_rotina", nullable = true)
     private Rotina rotina;
 
-    // --- CAMPO ADICIONADO PARA O FORMULÁRIO ---
-    @Transient // Informa ao JPA para NÃO salvar este campo no banco
+    // --- ESTE CAMPO É OBRIGATÓRIO ---
+    // Ele recebe o ID da rotina do formulário
+    @Transient 
     private Long idRotina;
     
-    // --- Getters e Setters para o novo campo ---
-    public Long getIdRotina() {
-        return idRotina;
-    }
-
-    public void setIdRotina(Long idRotina) {
-        this.idRotina = idRotina;
-    }
-    // ------------------------------------------
+    // --- Getters e Setters (Formato Padrão) ---
 
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -58,7 +50,6 @@ public class Tarefa {
     public String getTitulo() {
         return titulo;
     }
-
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
@@ -66,7 +57,6 @@ public class Tarefa {
     public String getDescricao() {
         return descricao;
     }
-
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
@@ -74,7 +64,6 @@ public class Tarefa {
     public String getPrioridade() {
         return prioridade;
     }
-
     public void setPrioridade(String prioridade) {
         this.prioridade = prioridade;
     }
@@ -82,7 +71,6 @@ public class Tarefa {
     public String getStatus() {
         return status;
     }
-
     public void setStatus(String status) {
         this.status = status;
     }
@@ -90,7 +78,6 @@ public class Tarefa {
     public LocalDate getDataInicio() {
         return dataInicio;
     }
-
     public void setDataInicio(LocalDate dataInicio) {
         this.dataInicio = dataInicio;
     }
@@ -98,7 +85,6 @@ public class Tarefa {
     public LocalDate getDataFim() {
         return dataFim;
     }
-
     public void setDataFim(LocalDate dataFim) {
         this.dataFim = dataFim;
     }
@@ -106,7 +92,6 @@ public class Tarefa {
     public Usuario getUsuario() {
         return usuario;
     }
-
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
@@ -114,8 +99,15 @@ public class Tarefa {
     public Rotina getRotina() {
         return rotina;
     }
-
     public void setRotina(Rotina rotina) {
         this.rotina = rotina;
+    }
+
+   
+    public Long getIdRotina() {
+        return idRotina;
+    }
+    public void setIdRotina(Long idRotina) {
+        this.idRotina = idRotina;
     }
 }
