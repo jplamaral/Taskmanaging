@@ -79,14 +79,26 @@
                 </div>
                 
                 <div th:each="rotina : ${rotinas}" class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3 class="h5 mb-0" th:text="${rotina.nome}">Nome da Rotina</h3>
-                        <a th:href="@{/rotinas/deletar/{id}(id=${rotina.id})}" 
-                           class="btn btn-sm btn-outline-danger"
-                           onclick="return confirm('Excluir esta rotina também excluirá TODAS as tarefas associadas. Tem certeza?');">
-                           Excluir Rotina
-                        </a>
-                    </div>
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="h5 mb-0" th:text="${rotina.nome}">Nome da Rotina</h3>
+                            <a th:href="@{/rotinas/deletar/{id}(id=${rotina.id})}" 
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Excluir esta rotina também excluirá TODAS as tarefas associadas. Tem certeza?');">
+                               Excluir Rotina
+                            </a>
+                        </div>
+
+                        <div class="progress mt-2" role="progressbar" 
+                             th:aria-valuenow="${rotina.progresso}" 
+                             aria-valuemin="0" aria-valuemax="100" style="height: 10px;">
+                             
+                            <div class="progress-bar" 
+                                 th:style="'width: ' + ${rotina.progresso} + '%;'"
+                                 th:text="${rotina.progresso + '%'}">
+                            </div>
+                        </div>
+                        </div>
                     <ul class="list-group list-group-flush">
                         <li th:each="tarefa : ${rotina.tarefas}" 
                             class="list-group-item d-flex justify-content-between align-items-center"

@@ -47,7 +47,7 @@
                             <div class="mb-3">
                                 <label for="rotina" class="form-label">Associar à Rotina (Opcional):</label>
             
-                                <select id="rotina" th:field="*{rotina.id}" class="form-select">
+                                <select id="rotina" th:field="*{idRotina}" class="form-select">
                                     <option value="">Nenhuma</option>
                                     <option th:each="rotina : ${rotinas}"
                                             th:value="${rotina.id}"
