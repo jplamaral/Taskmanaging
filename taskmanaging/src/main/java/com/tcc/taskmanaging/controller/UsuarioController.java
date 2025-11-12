@@ -1,6 +1,5 @@
 package com.tcc.taskmanaging.controller;
 
-// (Todos os seus imports permanecem os mesmos)
 import com.tcc.taskmanaging.model.Rotina;
 import com.tcc.taskmanaging.model.Tarefa;
 import com.tcc.taskmanaging.model.Usuario;
@@ -26,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map; // Importado para o Relatório
 import java.util.Optional;
 
 
@@ -115,27 +115,32 @@ public class UsuarioController {
         return "index";
     }
 
-    // --- CORREÇÃO APLICADA AQUI ---
-    // Precisamos garantir que "usuarioLogado" esteja no Model ANTES de retornar "perfil".
-    // Mesmo que o @ModelAttribute acima faça isso, esta é uma garantia extra.
     @GetMapping("/perfil")
     public String showPerfil(Model model) {
         log.info("GET /perfil");
-        // Se o @ModelAttribute("usuarioLogado") ainda não foi adicionado 
-        // (o que pode acontecer dependendo da ordem de execução), 
-        // nós o adicionamos manualmente.
+        // Correção para Erro 500 (NullPointerException no Thymeleaf)
         if (!model.containsAttribute("usuarioLogado")) {
              try {
                 Usuario usuario = usuarioService.getUsuarioLogado();
                 model.addAttribute("usuarioLogado", usuario);
             } catch (Exception e) {
                 log.error("Erro ao buscar usuário logado para a página de perfil", e);
-                return "redirect:/logout"; // Se não puder carregar, melhor deslogar
+                return "redirect:/logout"; 
             }
         }
         return "perfil";
     }
-    // --- FIM DA CORREÇÃO ---
+    
+    // Endpoint para o novo Relatório de Desempenho
+    @GetMapping("/relatorio")
+    public String showRelatorio(Model model) {
+        log.info("GET /relatorio requisitado.");
+        
+        Map<String, Long> relatorioData = tarefaService.getRelatorioDesempenho();
+        model.addAttribute("relatorio", relatorioData);
+        
+        return "relatorio"; // Renderiza relatorio.html
+    }
     
     @PostMapping("/perfil/upload")
     public String uploadFoto(@RequestParam("foto") MultipartFile foto, RedirectAttributes redirectAttributes) {

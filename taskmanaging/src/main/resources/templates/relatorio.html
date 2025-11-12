@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Relatório de Desempenho')}"></head>
+
+<body>
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container container-principal">
+        <h2 class="mb-4">Relatório de Desempenho</h2>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title text-center">Desempenho de Conclusão</h4>
+                        <div style="max-width: 400px; margin: auto;">
+                            <canvas id="graficoConcluidas"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Tarefas Concluídas</h5>
+                        <p class="card-text fs-1 fw-bold" th:text="${relatorio.totalConcluidas}">0</p>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Tarefas Pendentes</h5>
+                        <p class="card-text fs-1 fw-bold" th:text="${relatorio.totalPendentes}">0</p>
+                    </div>
+                </div>
+                
+                <div class="card text-white bg-danger mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Pendentes e Atrasadas</h5>
+                        <p class="card-text fs-1 fw-bold" th:text="${relatorio.pendentesAtrasadas}">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <div th:replace="~{fragments/footer :: scripts}"></div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const relatorioData = /*[[${relatorio}]]*/ {};
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('graficoConcluidas');
+            if (ctx) { 
+                
+                const getTextColor = () => {
+                    return getComputedStyle(document.body).getPropertyValue('--cor-texto-principal');
+                };
+
+                // 2. Cria o gráfico
+                const meuGrafico = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['No Prazo', 'Atrasadas'],
+                        datasets: [{
+                            label: 'Tarefas Concluídas',
+                            data: [
+                                relatorioData.concluidasNoPrazo, 
+                                relatorioData.concluidasAtrasadas
+                            ],
+                            backgroundColor: [
+                                '#198754','#fd7e14'
+                            ]
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: getTextColor() 
+                                }
+                            }
+                        }
+                    }
+                });
+                const observer = new MutationObserver((mutationsList) => {
+                    for (const mutation of mutationsList) {
+                        // Se o atributo 'class' (onde o 'dark-mode' está) mudar...
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                            const newColor = getTextColor();
+
+                            meuGrafico.options.plugins.legend.labels.color = newColor;
+                            meuGrafico.update(); // Redesenha o gráfico
+                        }
+                    }
+                });
+
+                observer.observe(document.documentElement, { attributes: true });
+
+            }
+        });
+     
+    </script>
+
+</body>
+</html>

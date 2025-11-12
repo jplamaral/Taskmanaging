@@ -22,22 +22,27 @@
 
                             <div class="mb-3">
                                 <label for="titulo" class="form-label">Título:</label>
-                                <input type="text" id="titulo" th:field="*{titulo}" class="form-control" required />
+                                <input type="text" th:field="*{titulo}" class="form-control" required />
                             </div>
             
                             <div class="mb-3">
                                 <label for="descricao" class="form-label">Descrição:</label>
-                                <textarea id="descricao" th:field="*{descricao}" rows="3" class="form-control"></textarea>
+                                <textarea th:field="*{descricao}" rows="3" class="form-control"></textarea>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="dataFim" class="form-label">Data Fim:</label>
-                                    <input type="date" id="dataFim" th:field="*{dataFim}" th:value="${#temporals.format(tarefa.dataFim, 'yyyy-MM-dd')}" class="form-control" />
+                                    
+                                    <input type="date" 
+                                           id="dataFim" 
+                                           name="dataFim" 
+                                           th:value="${tarefa.dataFim != null ? #temporals.format(tarefa.dataFim, 'yyyy-MM-dd') : ''}" 
+                                           class="form-control" />
                                 </div>
         
                                 <div class="col-md-6 mb-3">
                                     <label for="prioridade" class="form-label">Prioridade:</label>
-                                    <select id="prioridade" th:field="*{prioridade}" class="form-select">
+                                    <select th:field="*{prioridade}" class="form-select">
                                         <option value="baixa">Baixa</option>
                                         <option value="media">Média</option>
                                         <option value="alta">Alta</option>
@@ -47,7 +52,7 @@
                             <div class="mb-3">
                                 <label for="rotina" class="form-label">Associar à Rotina (Opcional):</label>
             
-                                <select id="rotina" th:field="*{idRotina}" class="form-select">
+                                <select th:field="*{idRotina}" class="form-select">
                                     <option value="">Nenhuma</option>
                                     <option th:each="rotina : ${rotinas}"
                                             th:value="${rotina.id}"

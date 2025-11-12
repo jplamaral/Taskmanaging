@@ -7,7 +7,8 @@
         
         <a th:href="@{/}" class="navbar-brand d-flex align-items-center">
             <img th:src="@{/img/logo.png}" alt="Logo" width="40" height="40" class="me-2">
-            <span class="h3 mb-0 text-navbar-brand">TaskManaging</span> </a>
+            <span class="h3 mb-0 text-navbar-brand">TaskManaging</span>
+        </a>
 
         <div class="d-flex align-items-center">
             
@@ -17,7 +18,8 @@
             </button>
 
             <div class="dropdown text-end">
-                <a href="#" class="d-block text-decoration-none dropdown-toggle text-navbar-profile" data-bs-toggle="dropdown" aria-expanded="false"> <img th:if="${usuarioLogado != null && usuarioLogado.fotoPerfil != null}"
+                <a href="#" class="d-block text-decoration-none dropdown-toggle text-navbar-profile" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img th:if="${usuarioLogado != null && usuarioLogado.fotoPerfil != null}"
                          th:src="@{'/usuario/foto/' + ${usuarioLogado.id}}"
                          alt="Foto do usuário"
                          class="profile-pic-header">
@@ -28,10 +30,20 @@
                          class="profile-pic-header">
                     <span class="fw-semibold d-none d-sm-inline ms-2" th:text="${usuarioLogado != null ? usuarioLogado.nome : 'Perfil'}">Meu Perfil</span>
                 </a>
+                
                 <ul class="dropdown-menu dropdown-menu-end text-small">
-                    <li><a class="dropdown-item" th:href="@{/perfil}">
-                        <i class="bi bi-person-circle me-2"></i>Meu Perfil
-                    </a></li>
+                    <li>
+                        <a class="dropdown-item" th:href="@{/perfil}">
+                            <i class="bi bi-person-circle me-2"></i>Meu Perfil
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a class="dropdown-item" th:href="@{/relatorio}">
+                            <i class="bi bi-bar-chart-line-fill me-2"></i>Relatório
+                        </a>
+                    </li>
+                    
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <form th:action="@{/logout}" method="post" class="mb-0">
@@ -40,8 +52,7 @@
                             </button>
                         </form>
                     </li>
-                </ul>
-            </div>
+                </ul> </div>
             
         </div>
     </div>

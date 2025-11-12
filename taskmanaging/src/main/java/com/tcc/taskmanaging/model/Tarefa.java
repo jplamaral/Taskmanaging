@@ -3,6 +3,7 @@ package com.tcc.taskmanaging.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+
 @Entity
 @Table(name = "tarefas")
 public class Tarefa {
@@ -25,6 +26,10 @@ public class Tarefa {
     @Column(name = "data_fim")
     private LocalDate dataFim;
 
+    @Temporal(TemporalType.DATE)
+    @Column(name = "data_conclusao") 
+    private LocalDate dataConclusao;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
@@ -33,7 +38,6 @@ public class Tarefa {
     @JoinColumn(name = "id_rotina", nullable = true)
     private Rotina rotina;
 
-    // --- ESTE CAMPO É OBRIGATÓRIO ---
     // Ele recebe o ID da rotina do formulário
     @Transient 
     private Long idRotina;
@@ -87,6 +91,13 @@ public class Tarefa {
     }
     public void setDataFim(LocalDate dataFim) {
         this.dataFim = dataFim;
+    }
+
+    public LocalDate getDataConclusao() {
+        return dataConclusao;
+    }
+    public void setDataConclusao(LocalDate dataConclusao){
+        this.dataConclusao = dataConclusao;
     }
 
     public Usuario getUsuario() {

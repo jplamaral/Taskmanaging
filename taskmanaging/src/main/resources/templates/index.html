@@ -27,19 +27,19 @@
                         <form th:action="@{/tarefas/criar}" th:object="${novaTarefa}" method="post">
                             <div class="mb-3">
                                 <label for="titulo" class="form-label">Título:</label>
-                                <input type="text" id="titulo" th:field="*{titulo}" class="form-control" required />
+                                <input type="text" th:field="*{titulo}" class="form-control" required />
                             </div>
                             <div class="mb-3">
                                 <label for="descricao" class="form-label">Descrição:</label>
-                                <textarea id="descricao" th:field="*{descricao}" rows="3" class="form-control"></textarea>
+                                <textarea th:field="*{descricao}" rows="3" class="form-control"></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="dataFim" class="form-label">Data Fim:</label>
-                                <input type="date" id="dataFim" th:field="*{dataFim}" class="form-control" />
+                                <input type="date" id="dataFim" name="dataFim" class="form-control" />
                             </div>
                             <div class="mb-3">
                                 <label for="prioridade" class="form-label">Prioridade:</label>
-                                <select id="prioridade" th:field="*{prioridade}" class="form-select">
+                                <select th:field="*{prioridade}" class="form-select">
                                     <option value="media">Média</option>
                                     <option value="baixa">Baixa</option>
                                     <option value="alta">Alta</option>
@@ -47,7 +47,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="rotina" class="form-label">Associar à Rotina:</label>
-                                <select id="rotina" th:field="*{idRotina}" class="form-select">
+                                <select th:field="*{idRotina}" class="form-select">
                                     <option value="">Nenhuma (Tarefa Avulsa)</option>
                                     <option th:each="r : ${rotinas}" th:value="${r.id}" th:text="${r.nome}"></option>
                                 </select>
@@ -89,11 +89,9 @@
                                Excluir Rotina
                             </a>
                         </div>
-
                         <div class="progress mt-2" role="progressbar" 
                              th:aria-valuenow="${rotina.progresso}" 
                              aria-valuemin="0" aria-valuemax="100" style="height: 10px;">
-                             
                             <div class="progress-bar" 
                                  th:style="'width: ' + ${rotina.progresso} + '%;'"
                                  th:text="${rotina.progresso + '%'}">
@@ -107,11 +105,28 @@
                             
                             <div>
                                 <h5 class="mb-1 tarefa-titulo" th:text="${tarefa.titulo}">Título da Tarefa</h5>
-                                
                                 <p th:if="${tarefa.descricao != null and tarefa.descricao != ''}" 
                                    class="mb-1 text-muted small" 
                                    th:text="${tarefa.descricao}"></p>
                                 <small th:text="${tarefa.prioridade}">Prioridade</small>
+                                
+                                <div th:if="${tarefa.dataFim != null}" class="mt-2 d-inline-block">
+                                    <span th:if="${tarefa.status == 'pendente' AND tarefa.dataFim.isBefore(#temporals.createToday())}" 
+                                          class="badge text-bg-danger">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                        Venceu em: <span th:text="${#temporals.format(tarefa.dataFim, 'dd/MM/yyyy')}"></span>
+                                    </span>
+                                    <span th:if="${tarefa.status == 'pendente' AND tarefa.dataFim.isEqual(#temporals.createToday())}"
+                                          class="badge text-bg-warning">
+                                        <i class="bi bi-clock-fill me-1"></i>
+                                        Vence Hoje
+                                    </span>
+                                    <span th:if="${tarefa.status == 'pendente' AND tarefa.dataFim.isAfter(#temporals.createToday())}"
+                                          class="badge text-bg-secondary">
+                                        <i class="bi bi-calendar-event me-1"></i>
+                                        Vence em: <span th:text="${#temporals.format(tarefa.dataFim, 'dd/MM/yyyy')}"></span>
+                                    </span>
+                                </div>
                             </div>
                             
                             <div class="acoes">
@@ -125,6 +140,7 @@
                                 </a>
                             </div>
                         </li>
+                        
                         <li th:if="${#lists.isEmpty(rotina.tarefas)}" class="list-group-item">
                             <span class="text-muted">Nenhuma tarefa nesta rotina.</span>
                         </li>
@@ -140,11 +156,28 @@
                             
                             <div>
                                 <h5 class="mb-1 tarefa-titulo" th:text="${tarefa.titulo}">Título da Tarefa</h5>
-                                
                                 <p th:if="${tarefa.descricao != null and tarefa.descricao != ''}" 
                                    class="mb-1 text-muted small" 
                                    th:text="${tarefa.descricao}"></p>
                                 <small th:text="${tarefa.prioridade}">Prioridade</small>
+                                
+                                <div th:if="${tarefa.dataFim != null}" class="mt-2 d-inline-block">
+                                    <span th:if="${tarefa.status == 'pendente' AND tarefa.dataFim.isBefore(#temporals.createToday())}" 
+                                          class="badge text-bg-danger">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                        Venceu em: <span th:text="${#temporals.format(tarefa.dataFim, 'dd/MM/yyyy')}"></span>
+                                    </span>
+                                    <span th:if="${tarefa.status == 'pendente' AND tarefa.dataFim.isEqual(#temporals.createToday())}"
+                                          class="badge text-bg-warning">
+                                        <i class="bi bi-clock-fill me-1"></i>
+                                        Vence Hoje
+                                    </span>
+                                    <span th:if="${tarefa.status == 'pendente' AND tarefa.dataFim.isAfter(#temporals.createToday())}"
+                                          class="badge text-bg-secondary">
+                                        <i class="bi bi-calendar-event me-1"></i>
+                                        Vence em: <span th:text="${#temporals.format(tarefa.dataFim, 'dd/MM/yyyy')}"></span>
+                                    </span>
+                                </div>
                             </div>
                             
                             <div class="acoes">
@@ -165,7 +198,6 @@
     </div>
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        
         <div th:if="${toast_message}" id="undo-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
             <div class="toast-header">
                 <img th:src="@{/img/logo.png}" width="20" height="20" class="rounded me-2" alt="Logo">
@@ -175,7 +207,6 @@
             </div>
             <div class="toast-body d-flex justify-content-between align-items-center">
                 <span th:text="${toast_message}">Mensagem...</span>
-                
                 <form th:if="${undo_action != null}" th:action="@{/tarefas/undo}" method="post" class="ms-2 mb-0">
                     <input type="hidden" name="action" th:value="${undo_action}" />
                     <input type="hidden" name="id" th:value="${undo_tarefa_id}" />
