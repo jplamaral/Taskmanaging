@@ -82,7 +82,6 @@
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3 class="h5 mb-0" th:text="${rotina.nome}">Nome da Rotina</h3>
-                            
                             <a th:href="@{/rotinas/deletar/{id}(id=${rotina.id})}" 
                                class="btn btn-sm btn-outline-danger"
                                data-bs-toggle="modal" 
@@ -108,6 +107,10 @@
                             
                             <div>
                                 <h5 class="mb-1 tarefa-titulo" th:text="${tarefa.titulo}">Título da Tarefa</h5>
+                                
+                                <p th:if="${tarefa.descricao != null and tarefa.descricao != ''}" 
+                                   class="mb-1 text-muted small" 
+                                   th:text="${tarefa.descricao}"></p>
                                 <small th:text="${tarefa.prioridade}">Prioridade</small>
                             </div>
                             
@@ -137,6 +140,10 @@
                             
                             <div>
                                 <h5 class="mb-1 tarefa-titulo" th:text="${tarefa.titulo}">Título da Tarefa</h5>
+                                
+                                <p th:if="${tarefa.descricao != null and tarefa.descricao != ''}" 
+                                   class="mb-1 text-muted small" 
+                                   th:text="${tarefa.descricao}"></p>
                                 <small th:text="${tarefa.prioridade}">Prioridade</small>
                             </div>
                             
@@ -195,6 +202,7 @@
         </div>
       </div>
     </div>
+
     <div th:replace="~{fragments/footer :: scripts}"></div>
 </body>
 </html>
