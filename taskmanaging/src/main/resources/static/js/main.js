@@ -143,4 +143,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-});
+    const undoToastEl = document.getElementById('undo-toast');
+    if (undoToastEl) {
+      
+        const toast = new bootstrap.Toast(undoToastEl);
+        toast.show();
+    }
+
+    // ... (todo o seu código JS existente, incluindo o do Toast) ...
+
+
+    const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+    
+    // Verifica se o modal existe na página atual
+    if (confirmDeleteModal) {
+        confirmDeleteModal.addEventListener('show.bs.modal', (event) => {
+            const button = event.relatedTarget;
+            const deleteUrl = button.getAttribute('href');
+            const modalConfirmButton = confirmDeleteModal.querySelector('#modal-confirm-delete-btn');
+            modalConfirmButton.setAttribute('href', deleteUrl);
+        });
+    }
+
+}); 

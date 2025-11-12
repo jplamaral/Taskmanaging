@@ -46,9 +46,10 @@ body {
     margin: 20px auto;
 }
 
-/* Garante que os títulos usem a cor do tema */
-h1, h2, h3, h4, h5, h6 {
-    color: var(--cor-texto-principal);
+/* Garante que todos os títulos (incluindo .card-title) usem a cor do tema */
+h1, h2, h3, h4, h5, h6,
+.card-title {
+    color: var(--cor-texto-principal) !important;
 }
 
 .form-label {
@@ -119,47 +120,32 @@ a:hover {
     color: var(--cor-texto-secundario);
 }
 
-
-/* ===============================================
- * CORREÇÃO PARA O INPUT DE ARQUIVO
- * =============================================== */
-
-/* 1. Define a cor do TEXTO (nome do arquivo) para a cor principal do tema */
+/* Estilização do Input de Arquivo */
 .form-control[type="file"] {
     color: var(--cor-texto-principal);
 }
-
-/* 2. Estilo PADRÃO (Modo Claro) para o botão "Escolher arquivo" */
 .form-control[type="file"]::file-selector-button {
-    background-color: var(--cor-primaria-logo); /* Azul (cor que você pediu) */
-    color: #000; /* Texto preto */
+    background-color: var(--cor-primaria-logo);
+    color: #000;
     border: 0;
     padding: 0.375rem 0.75rem;
-    margin: -0.375rem -0.75rem; /* Faz o botão grudar na borda esquerda */
+    margin: -0.375rem -0.75rem;
     margin-right: 0.75rem;
     transition: background-color .15s ease-in-out;
 }
-
-/* 3. Hover do botão (Modo Claro) */
 .form-control[type="file"]::file-selector-button:hover {
-    background-color: var(--cor-primaria-hover); /* Azul mais escuro */
+    background-color: var(--cor-primaria-hover);
     color: #000;
 }
-
-/* 4. Sobrescreve o botão para o MODO ESCURO */
 html.dark-mode .form-control[type="file"]::file-selector-button {
-    background-color: var(--cor-secundaria-logo); /* Cinza escuro */
-    color: var(--cor-texto-principal); /* Texto branco */
+    background-color: var(--cor-secundaria-logo);
+    color: var(--cor-texto-principal);
 }
-
-/* 5. Hover do botão (Modo Escuro) */
 html.dark-mode .form-control[type="file"]::file-selector-button:hover {
-    background-color: var(--cor-primaria-logo); /* Azul claro no hover */
-    color: #000; /* Texto preto no hover */
+    background-color: var(--cor-primaria-logo);
+    color: #000;
 }
-/* ===============================================
- * FIM DA CORREÇÃO
- * =============================================== */
+/* Fim da Estilização do Input de Arquivo */
 
 
 .list-group-item {
@@ -323,4 +309,43 @@ a:focus, button:focus, input:focus, select:focus {
 
 .form-toggle-hidden {
     display: none;
+}
+
+/* ===============================================
+ * TOAST (Notificação)
+ * =============================================== */
+
+.toast {
+    background-color: var(--cor-fundo-card);
+    border: 1px solid var(--cor-borda);
+    color: var(--cor-texto-principal);
+}
+
+.toast-header {
+    background-color: var(--cor-fundo); 
+    border-bottom: 1px solid var(--cor-borda);
+    color: var(--cor-texto-principal);
+}
+
+html.dark-mode .toast-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* ===============================================
+ * MODAL (Caixa de Confirmação)
+ * =============================================== */
+
+.modal-content {
+    background-color: var(--cor-fundo-card);
+    color: var(--cor-texto-principal);
+    border: 1px solid var(--cor-borda);
+}
+
+.modal-header,
+.modal-footer {
+    border-color: var(--cor-borda);
+}
+
+html.dark-mode .modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
 }

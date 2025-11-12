@@ -82,9 +82,11 @@
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3 class="h5 mb-0" th:text="${rotina.nome}">Nome da Rotina</h3>
+                            
                             <a th:href="@{/rotinas/deletar/{id}(id=${rotina.id})}" 
                                class="btn btn-sm btn-outline-danger"
-                               onclick="return confirm('Excluir esta rotina também excluirá TODAS as tarefas associadas. Tem certeza?');">
+                               data-bs-toggle="modal" 
+                               data-bs-target="#confirmDeleteModal">
                                Excluir Rotina
                             </a>
                         </div>
@@ -98,7 +100,7 @@
                                  th:text="${rotina.progresso + '%'}">
                             </div>
                         </div>
-                        </div>
+                    </div>
                     <ul class="list-group list-group-flush">
                         <li th:each="tarefa : ${rotina.tarefas}" 
                             class="list-group-item d-flex justify-content-between align-items-center"
@@ -112,7 +114,12 @@
                             <div class="acoes">
                                 <a th:if="${tarefa.status == 'pendente'}" th:href="@{/tarefas/concluir/{id}(id=${tarefa.id})}" class="btn btn-sm btn-outline-success">Concluir</a>
                                 <a th:href="@{/tarefas/editar/{id}(id=${tarefa.id})}" class="btn btn-sm btn-outline-warning">Editar</a>
-                                <a th:href="@{/tarefas/deletar/{id}(id=${tarefa.id})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?');">Excluir</a>
+                                <a th:href="@{/tarefas/deletar/{id}(id=${tarefa.id})}" 
+                                   class="btn btn-sm btn-outline-danger" 
+                                   data-bs-toggle="modal" 
+                                   data-bs-target="#confirmDeleteModal">
+                                   Excluir
+                                </a>
                             </div>
                         </li>
                         <li th:if="${#lists.isEmpty(rotina.tarefas)}" class="list-group-item">
@@ -136,7 +143,12 @@
                             <div class="acoes">
                                 <a th:if="${tarefa.status == 'pendente'}" th:href="@{/tarefas/concluir/{id}(id=${tarefa.id})}" class="btn btn-sm btn-outline-success">Concluir</a>
                                 <a th:href="@{/tarefas/editar/{id}(id=${tarefa.id})}" class="btn btn-sm btn-outline-warning">Editar</a>
-                                <a th:href="@{/tarefas/deletar/{id}(id=${tarefa.id})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?');">Excluir</a>
+                                <a th:href="@{/tarefas/deletar/{id}(id=${tarefa.id})}" 
+                                   class="btn btn-sm btn-outline-danger" 
+                                   data-bs-toggle="modal" 
+                                   data-bs-target="#confirmDeleteModal">
+                                   Excluir
+                                </a>
                             </div>
                         </li>
                     </div>
@@ -145,6 +157,44 @@
         </div>
     </div>
 
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        
+        <div th:if="${toast_message}" id="undo-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+            <div class="toast-header">
+                <img th:src="@{/img/logo.png}" width="20" height="20" class="rounded me-2" alt="Logo">
+                <strong class="me-auto">Notificação</strong>
+                <small>agora</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body d-flex justify-content-between align-items-center">
+                <span th:text="${toast_message}">Mensagem...</span>
+                
+                <form th:if="${undo_action != null}" th:action="@{/tarefas/undo}" method="post" class="ms-2 mb-0">
+                    <input type="hidden" name="action" th:value="${undo_action}" />
+                    <input type="hidden" name="id" th:value="${undo_tarefa_id}" />
+                    <button type="submit" class="btn btn-sm btn-primary">Desfazer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="confirmDeleteModalLabel">Confirmar Exclusão</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <a id="modal-confirm-delete-btn" href="#" class="btn btn-danger">Excluir</a>
+          </div>
+        </div>
+      </div>
+    </div>
     <div th:replace="~{fragments/footer :: scripts}"></div>
 </body>
 </html>
