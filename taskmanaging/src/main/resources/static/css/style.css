@@ -46,7 +46,6 @@ body {
     margin: 20px auto;
 }
 
-/* Garante que todos os títulos (incluindo .card-title) usem a cor do tema */
 h1, h2, h3, h4, h5, h6,
 .card-title {
     color: var(--cor-texto-principal) !important;
@@ -217,21 +216,27 @@ a:focus, button:focus, input:focus, select:focus {
     height: auto;
 }
 
+
 .auth-tab {
     cursor: pointer;
     transition: color 0.3s, border-bottom 0.3s;
+
     color: var(--cor-texto-secundario);
 }
 
+/* Define o estilo da aba ativa */
 .auth-tab.active-tab {
     border-bottom: 3px solid var(--cor-primaria-logo);
     padding-bottom: 4px;
     color: var(--cor-texto-principal);
 }
 
+/* Define o estilo do hover (funciona em ambas as abas) */
 .auth-tab:hover {
     color: var(--cor-primaria-logo);
 }
+/* --- FIM DA SEÇÃO --- */
+
 
 .auth-form {
     display: block;
@@ -246,7 +251,6 @@ a:focus, button:focus, input:focus, select:focus {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Botão de TEMA para a página AUTH */
 .theme-toggle-auth {
     position: absolute;
     top: 1.5rem;
