@@ -3,19 +3,20 @@ package com.tcc.taskmanaging.service;
 import com.tcc.taskmanaging.model.Rotina;
 import com.tcc.taskmanaging.model.Tarefa;
 import com.tcc.taskmanaging.model.Usuario;
-import com.tcc.taskmanaging.repository.RotinaRepository; // Importado
+import com.tcc.taskmanaging.repository.RotinaRepository;
 import com.tcc.taskmanaging.repository.TarefaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate; // Importado
-import java.util.HashMap; // Importado
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map; // Importado
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set; 
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TarefaService {
@@ -25,15 +26,15 @@ public class TarefaService {
     private final TarefaRepository tarefaRepository;
     private final UsuarioService usuarioService;
     private final RotinaService rotinaService;
-    private final RotinaRepository rotinaRepository; // Adicionado
+    private final RotinaRepository rotinaRepository;
 
     @Autowired
     public TarefaService(TarefaRepository tarefaRepository, UsuarioService usuarioService, 
-                         RotinaService rotinaService, RotinaRepository rotinaRepository) { // Adicionado
+                         RotinaService rotinaService, RotinaRepository rotinaRepository) {
         this.tarefaRepository = tarefaRepository;
         this.usuarioService = usuarioService;
         this.rotinaService = rotinaService;
-        this.rotinaRepository = rotinaRepository; // Adicionado
+        this.rotinaRepository = rotinaRepository;
     }
 
     public List<Tarefa> getTarefasDoUsuarioLogado() {
@@ -67,7 +68,6 @@ public class TarefaService {
         tarefaRepository.save(tarefa);
         log.info("Nova tarefa criada com ID: {} pelo usuário ID: {}", tarefa.getId(), usuario.getId());
 
-        // Chama o método de atualização do progresso
         atualizarProgressoRotina(idRotinaNova);
     }
 
@@ -77,13 +77,11 @@ public class TarefaService {
         
         Tarefa tarefa = getTarefaPorIdVerificandoDono(id, usuario);
         
-        // Pega o ID da rotina ANTES de deletar
         Long idRotina = (tarefa.getRotina() != null) ? tarefa.getRotina().getId() : null;
         
         tarefaRepository.delete(tarefa);
         log.info("Tarefa ID: {} deletada com sucesso.", id);
         
-        // Atualiza a rotina (se ela existia)
         atualizarProgressoRotina(idRotina);
     }
 
@@ -94,19 +92,15 @@ public class TarefaService {
         Tarefa tarefa = getTarefaPorIdVerificandoDono(id, usuario);
         tarefa.setStatus(novoStatus);
 
-        // Lógica de Data de Conclusão (para o Relatório)
         if ("concluída".equals(novoStatus)) {
-            // Se está concluindo, define a data de hoje
             tarefa.setDataConclusao(LocalDate.now());
         } else {
-            // Se está revertendo para "pendente" (ex: via "Desfazer"), limpa a data
             tarefa.setDataConclusao(null);
         }
 
         tarefaRepository.save(tarefa);
         log.info("Status da tarefa ID: {} atualizado.", id);
         
-        // Atualiza o progresso da rotina
         if (tarefa.getRotina() != null) {
             atualizarProgressoRotina(tarefa.getRotina().getId());
         }
@@ -118,7 +112,6 @@ public class TarefaService {
         
         Tarefa tarefaDoBanco = getTarefaPorIdVerificandoDono(tarefaAtualizada.getId(), usuario);
         
-        // Pega o ID da rotina antiga ANTES de salvar
         Long idRotinaAntiga = (tarefaDoBanco.getRotina() != null) ? tarefaDoBanco.getRotina().getId() : null;
 
         tarefaDoBanco.setTitulo(tarefaAtualizada.getTitulo());
@@ -127,7 +120,7 @@ public class TarefaService {
         tarefaDoBanco.setPrioridade(tarefaAtualizada.getPrioridade());
 
         Long idRotinaNova = tarefaAtualizada.getIdRotina(); 
-        Rotina rotinaNova = null; // Guarda a nova rotina
+        Rotina rotinaNova = null;
 
         if (idRotinaNova != null) {
             Optional<Rotina> rotinaOpt = rotinaService.findById(idRotinaNova);
@@ -147,7 +140,6 @@ public class TarefaService {
         tarefaRepository.save(tarefaDoBanco);
         log.info("Tarefa ID: {} atualizada com sucesso.", tarefaDoBanco.getId());
         
-        // Atualiza o progresso das rotinas
         atualizarProgressoRotina(idRotinaAntiga);
         
         Long idRotinaNovaSalva = (rotinaNova != null) ? rotinaNova.getId() : null;
@@ -156,20 +148,12 @@ public class TarefaService {
         }
     }
     
-    /**
-     * Calcula e salva o percentual de progresso de uma rotina.
-     */
     private void atualizarProgressoRotina(Long rotinaId) {
-        if (rotinaId == null) {
-            return; // Tarefa avulsa, não faz nada
-        }
+        if (rotinaId == null) return;
 
         Optional<Rotina> rotinaOpt = rotinaRepository.findByIdWithTarefas(rotinaId);
         
-        if (rotinaOpt.isEmpty()) {
-            log.warn("Não foi possível encontrar a rotina ID {} para atualizar o progresso.", rotinaId);
-            return;
-        }
+        if (rotinaOpt.isEmpty()) return;
 
         Rotina rotina = rotinaOpt.get();
         Set<Tarefa> tarefas = rotina.getTarefas();
@@ -178,8 +162,8 @@ public class TarefaService {
             rotina.setProgresso(0);
         } else {
             double concluidas = tarefas.stream()
-                                      .filter(t -> "concluída".equals(t.getStatus()))
-                                      .count();
+                                     .filter(t -> "concluída".equals(t.getStatus()))
+                                     .count();
             
             double total = tarefas.size();
             int progresso = (int) Math.round((concluidas / total) * 100);
@@ -187,12 +171,8 @@ public class TarefaService {
         }
         
         rotinaRepository.save(rotina);
-        log.info("Progresso da rotina ID {} atualizado para {}%", rotina.getId(), rotina.getProgresso());
     }
     
-    /**
-     * Método de segurança interno.
-     */
     private Tarefa getTarefaPorIdVerificandoDono(Long tarefaId, Usuario usuario) {
         Tarefa tarefa = tarefaRepository.findById(tarefaId)
                 .orElseThrow(() -> {
@@ -208,27 +188,34 @@ public class TarefaService {
         return tarefa;
     }
 
-    /**
-     * Método público usado pelo TarefaController para carregar a página de edição.
-     */
     public Tarefa getTarefaById(Long id) {
         Usuario usuario = usuarioService.getUsuarioLogado();
         return getTarefaPorIdVerificandoDono(id, usuario);
     }
 
-    /**
-     * Gera um relatório de desempenho de tarefas para o usuário logado.
-     * @return Um Map com as estatísticas.
-     */
-    public Map<String, Long> getRelatorioDesempenho() {
+    // --- MÉTODO ATUALIZADO PARA RETORNAR LISTA E ESTATÍSTICAS (Map<String, Object>) ---
+    public Map<String, Object> getRelatorioDesempenho(Integer mes, Integer ano) {
         Usuario usuario = usuarioService.getUsuarioLogado();
-        List<Tarefa> tarefas = tarefaRepository.findByUsuario(usuario);
 
-        long totalConcluidas = tarefas.stream()
+        LocalDate dataAtual = LocalDate.now();
+        int mesBusca = (mes != null) ? mes : dataAtual.getMonthValue();
+        int anoBusca = (ano != null) ? ano : dataAtual.getYear();
+
+        LocalDate dataInicio = LocalDate.of(anoBusca, mesBusca, 1);
+        LocalDate dataFim = dataInicio.withDayOfMonth(dataInicio.lengthOfMonth());
+
+        // Busca tarefas do período
+        List<Tarefa> tarefas = tarefaRepository.findByUsuarioAndPeriodo(usuario, dataInicio, dataFim);
+
+        // Cria lista contendo APENAS as concluídas para exibir no frontend
+        List<Tarefa> listaConcluidas = tarefas.stream()
             .filter(t -> "concluída".equals(t.getStatus()))
-            .count();
+            .collect(Collectors.toList());
 
-        long concluidasNoPrazo = tarefas.stream()
+        // Cálculos Estatísticos
+        long totalConcluidas = listaConcluidas.size();
+
+        long concluidasNoPrazo = listaConcluidas.stream()
             .filter(t -> t.getDataConclusao() != null && 
                          t.getDataFim() != null && 
                          !t.getDataConclusao().isAfter(t.getDataFim()))
@@ -244,12 +231,22 @@ public class TarefaService {
                          t.getDataFim().isBefore(LocalDate.now()))
             .count();
 
-        Map<String, Long> relatorio = new HashMap<>();
+        // Prepara o Map de Retorno (Object para aceitar Long e List)
+        Map<String, Object> relatorio = new HashMap<>();
+        
+        // Estatísticas
         relatorio.put("totalConcluidas", totalConcluidas);
         relatorio.put("concluidasNoPrazo", concluidasNoPrazo);
         relatorio.put("concluidasAtrasadas", concluidasAtrasadas);
         relatorio.put("totalPendentes", totalPendentes);
         relatorio.put("pendentesAtrasadas", pendentesAtrasadas);
+        
+        // Lista Detalhada
+        relatorio.put("listaTarefasConcluidas", listaConcluidas);
+        
+        // Dados de Controle
+        relatorio.put("mesSelecionado", mesBusca);
+        relatorio.put("anoSelecionado", anoBusca);
 
         return relatorio;
     }

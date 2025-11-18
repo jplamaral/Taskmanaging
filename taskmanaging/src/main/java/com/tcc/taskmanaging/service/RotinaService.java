@@ -5,7 +5,7 @@ import com.tcc.taskmanaging.model.Usuario;
 import com.tcc.taskmanaging.repository.RotinaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +19,6 @@ public class RotinaService {
     private final RotinaRepository rotinaRepository;
     private final UsuarioService usuarioService;
 
-    @Autowired
     public RotinaService(RotinaRepository rotinaRepository, UsuarioService usuarioService) {
         this.rotinaRepository = rotinaRepository;
         this.usuarioService = usuarioService;

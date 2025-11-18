@@ -24,8 +24,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map; // Importado para o Relatório
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -118,7 +119,6 @@ public class UsuarioController {
     @GetMapping("/perfil")
     public String showPerfil(Model model) {
         log.info("GET /perfil");
-        // Correção para Erro 500 (NullPointerException no Thymeleaf)
         if (!model.containsAttribute("usuarioLogado")) {
              try {
                 Usuario usuario = usuarioService.getUsuarioLogado();
@@ -131,15 +131,20 @@ public class UsuarioController {
         return "perfil";
     }
     
-    // Endpoint para o novo Relatório de Desempenho
+    // --- MÉTODO ATUALIZADO ---
     @GetMapping("/relatorio")
-    public String showRelatorio(Model model) {
-        log.info("GET /relatorio requisitado.");
+    public String showRelatorio(@RequestParam(value = "mes", required = false) Integer mes,
+                                @RequestParam(value = "ano", required = false) Integer ano,
+                                Model model) {
+        log.info("GET /relatorio requisitado. Mês: {}, Ano: {}", mes, ano);
         
-        Map<String, Long> relatorioData = tarefaService.getRelatorioDesempenho();
+        // Mudança aqui: Tipo agora é Map<String, Object>
+        Map<String, Object> relatorioData = tarefaService.getRelatorioDesempenho(mes, ano);
         model.addAttribute("relatorio", relatorioData);
         
-        return "relatorio"; // Renderiza relatorio.html
+        model.addAttribute("anoAtual", LocalDate.now().getYear());
+        
+        return "relatorio"; 
     }
     
     @PostMapping("/perfil/upload")
@@ -170,7 +175,7 @@ public class UsuarioController {
         if (opt.isPresent() && opt.get().getFotoPerfil() != null) {
             log.debug("Exibindo foto de perfil do usuário ID: {}", id);
             imageBytes = opt.get().getFotoPerfil();
-            if (imageBytes[0] == (byte)0xFF && imageBytes[1] == (byte)0xD8) {
+            if (imageBytes.length > 1 && imageBytes[0] == (byte)0xFF && imageBytes[1] == (byte)0xD8) {
                 mediaType = MediaType.IMAGE_JPEG;
             }
         } else {

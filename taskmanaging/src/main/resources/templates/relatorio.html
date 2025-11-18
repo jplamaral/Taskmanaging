@@ -9,6 +9,45 @@
     <div class="container container-principal">
         <h2 class="mb-4">Relatório de Desempenho</h2>
 
+        <div class="card mb-4">
+            <div class="card-body py-3">
+                <form th:action="@{/relatorio}" method="get" class="row g-3 align-items-center justify-content-center">
+                    <div class="col-auto">
+                        <label for="mes" class="col-form-label fw-bold">Filtrar por:</label>
+                    </div>
+                    <div class="col-auto">
+                        <select name="mes" class="form-select">
+                            <option value="1" th:selected="${relatorio.mesSelecionado == 1}">Janeiro</option>
+                            <option value="2" th:selected="${relatorio.mesSelecionado == 2}">Fevereiro</option>
+                            <option value="3" th:selected="${relatorio.mesSelecionado == 3}">Março</option>
+                            <option value="4" th:selected="${relatorio.mesSelecionado == 4}">Abril</option>
+                            <option value="5" th:selected="${relatorio.mesSelecionado == 5}">Maio</option>
+                            <option value="6" th:selected="${relatorio.mesSelecionado == 6}">Junho</option>
+                            <option value="7" th:selected="${relatorio.mesSelecionado == 7}">Julho</option>
+                            <option value="8" th:selected="${relatorio.mesSelecionado == 8}">Agosto</option>
+                            <option value="9" th:selected="${relatorio.mesSelecionado == 9}">Setembro</option>
+                            <option value="10" th:selected="${relatorio.mesSelecionado == 10}">Outubro</option>
+                            <option value="11" th:selected="${relatorio.mesSelecionado == 11}">Novembro</option>
+                            <option value="12" th:selected="${relatorio.mesSelecionado == 12}">Dezembro</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <select name="ano" class="form-select">
+                            <option th:value="${anoAtual - 1}" th:text="${anoAtual - 1}" th:selected="${relatorio.anoSelecionado == (anoAtual - 1)}"></option>
+                            <option th:value="${anoAtual}" th:text="${anoAtual}" th:selected="${relatorio.anoSelecionado == anoAtual}"></option>
+                            <option th:value="${anoAtual + 1}" th:text="${anoAtual + 1}" th:selected="${relatorio.anoSelecionado == (anoAtual + 1)}"></option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-filter"></i> Aplicar
+                        </button>
+                        <a th:href="@{/relatorio}" class="btn btn-outline-secondary">Hoje</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-6">
                 <div class="card mb-4">
@@ -44,12 +83,51 @@
                 </div>
             </div>
         </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="h5 mb-0">Histórico de Tarefas Concluídas</h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div th:if="${#lists.isEmpty(relatorio.listaTarefasConcluidas)}" class="p-4 text-center text-muted">
+                            Nenhuma tarefa concluída neste período.
+                        </div>
+                        
+                        <ul th:if="${not #lists.isEmpty(relatorio.listaTarefasConcluidas)}" class="list-group list-group-flush">
+                            <li th:each="tarefa : ${relatorio.listaTarefasConcluidas}" class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="fw-semibold" th:text="${tarefa.titulo}">Título da Tarefa</span>
+                                    <br>
+                                    <small class="text-muted">
+                                        Concluída em: <span th:text="${#temporals.format(tarefa.dataConclusao, 'dd/MM/yyyy')}"></span>
+                                    </small>
+                                </div>
+                                <div>
+                                    <span th:if="${tarefa.dataFim == null || !tarefa.dataConclusao.isAfter(tarefa.dataFim)}" 
+                                          class="badge text-bg-success">
+                                          No Prazo <i class="bi bi-check-circle"></i>
+                                    </span>
+                                    
+                                    <span th:if="${tarefa.dataFim != null && tarefa.dataConclusao.isAfter(tarefa.dataFim)}" 
+                                          class="badge text-bg-warning text-white">
+                                          Com Atraso <i class="bi bi-exclamation-circle"></i>
+                                    </span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div> <div th:replace="~{fragments/footer :: scripts}"></div>
 
     <script th:inline="javascript">
-        /*<![CDATA[*/
-        const relatorioData = /*[[${relatorio}]]*/ {};
+    
+        const noPrazo =  0;
+        const atrasadas =  0;
         
         document.addEventListener('DOMContentLoaded', () => {
             const ctx = document.getElementById('graficoConcluidas');
@@ -59,17 +137,13 @@
                     return getComputedStyle(document.body).getPropertyValue('--cor-texto-principal');
                 };
 
-                // 2. Cria o gráfico
                 const meuGrafico = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
                         labels: ['No Prazo', 'Atrasadas'],
                         datasets: [{
                             label: 'Tarefas Concluídas',
-                            data: [
-                                relatorioData.concluidasNoPrazo, 
-                                relatorioData.concluidasAtrasadas
-                            ],
+                            data: [noPrazo, atrasadas],
                             backgroundColor: [
                                 '#198754','#fd7e14'
                             ]
@@ -85,23 +159,20 @@
                         }
                     }
                 });
+                
                 const observer = new MutationObserver((mutationsList) => {
                     for (const mutation of mutationsList) {
-                        // Se o atributo 'class' (onde o 'dark-mode' está) mudar...
                         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                             const newColor = getTextColor();
-
                             meuGrafico.options.plugins.legend.labels.color = newColor;
-                            meuGrafico.update(); // Redesenha o gráfico
+                            meuGrafico.update(); 
                         }
                     }
                 });
 
                 observer.observe(document.documentElement, { attributes: true });
-
             }
         });
-     
     </script>
 
 </body>
