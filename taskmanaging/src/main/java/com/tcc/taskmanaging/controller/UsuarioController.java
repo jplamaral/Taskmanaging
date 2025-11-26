@@ -131,7 +131,7 @@ public class UsuarioController {
         return "perfil";
     }
     
-    // --- MÉTODO ATUALIZADO ---
+   
     @GetMapping("/relatorio")
     public String showRelatorio(@RequestParam(value = "mes", required = false) Integer mes,
                                 @RequestParam(value = "ano", required = false) Integer ano,

@@ -9,6 +9,7 @@
     <div class="container container-principal">
         <h2 class="mb-4">Relatório de Desempenho</h2>
 
+        <!-- FILTRO DE MÊS/ANO -->
         <div class="card mb-4">
             <div class="card-body py-3">
                 <form th:action="@{/relatorio}" method="get" class="row g-3 align-items-center justify-content-center">
@@ -17,15 +18,15 @@
                     </div>
                     <div class="col-auto">
                         <select name="mes" class="form-select">
-                            <option value="1" th:selected="${relatorio.mesSelecionado == 1}">Janeiro</option>
-                            <option value="2" th:selected="${relatorio.mesSelecionado == 2}">Fevereiro</option>
-                            <option value="3" th:selected="${relatorio.mesSelecionado == 3}">Março</option>
-                            <option value="4" th:selected="${relatorio.mesSelecionado == 4}">Abril</option>
-                            <option value="5" th:selected="${relatorio.mesSelecionado == 5}">Maio</option>
-                            <option value="6" th:selected="${relatorio.mesSelecionado == 6}">Junho</option>
-                            <option value="7" th:selected="${relatorio.mesSelecionado == 7}">Julho</option>
-                            <option value="8" th:selected="${relatorio.mesSelecionado == 8}">Agosto</option>
-                            <option value="9" th:selected="${relatorio.mesSelecionado == 9}">Setembro</option>
+                            <option value="1"  th:selected="${relatorio.mesSelecionado == 1}">Janeiro</option>
+                            <option value="2"  th:selected="${relatorio.mesSelecionado == 2}">Fevereiro</option>
+                            <option value="3"  th:selected="${relatorio.mesSelecionado == 3}">Março</option>
+                            <option value="4"  th:selected="${relatorio.mesSelecionado == 4}">Abril</option>
+                            <option value="5"  th:selected="${relatorio.mesSelecionado == 5}">Maio</option>
+                            <option value="6"  th:selected="${relatorio.mesSelecionado == 6}">Junho</option>
+                            <option value="7"  th:selected="${relatorio.mesSelecionado == 7}">Julho</option>
+                            <option value="8"  th:selected="${relatorio.mesSelecionado == 8}">Agosto</option>
+                            <option value="9"  th:selected="${relatorio.mesSelecionado == 9}">Setembro</option>
                             <option value="10" th:selected="${relatorio.mesSelecionado == 10}">Outubro</option>
                             <option value="11" th:selected="${relatorio.mesSelecionado == 11}">Novembro</option>
                             <option value="12" th:selected="${relatorio.mesSelecionado == 12}">Dezembro</option>
@@ -33,9 +34,15 @@
                     </div>
                     <div class="col-auto">
                         <select name="ano" class="form-select">
-                            <option th:value="${anoAtual - 1}" th:text="${anoAtual - 1}" th:selected="${relatorio.anoSelecionado == (anoAtual - 1)}"></option>
-                            <option th:value="${anoAtual}" th:text="${anoAtual}" th:selected="${relatorio.anoSelecionado == anoAtual}"></option>
-                            <option th:value="${anoAtual + 1}" th:text="${anoAtual + 1}" th:selected="${relatorio.anoSelecionado == (anoAtual + 1)}"></option>
+                            <option th:value="${anoAtual - 1}"
+                                    th:text="${anoAtual - 1}"
+                                    th:selected="${relatorio.anoSelecionado == (anoAtual - 1)}"></option>
+                            <option th:value="${anoAtual}"
+                                    th:text="${anoAtual}"
+                                    th:selected="${relatorio.anoSelecionado == anoAtual}"></option>
+                            <option th:value="${anoAtual + 1}"
+                                    th:text="${anoAtual + 1}"
+                                    th:selected="${relatorio.anoSelecionado == (anoAtual + 1)}"></option>
                         </select>
                     </div>
                     <div class="col-auto">
@@ -48,6 +55,7 @@
             </div>
         </div>
 
+        <!-- GRÁFICO + CARDS NUMÉRICOS -->
         <div class="row">
             <div class="col-md-6">
                 <div class="card mb-4">
@@ -84,6 +92,7 @@
             </div>
         </div>
         
+        <!-- LISTA DE TAREFAS CONCLUÍDAS -->
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -96,12 +105,14 @@
                         </div>
                         
                         <ul th:if="${not #lists.isEmpty(relatorio.listaTarefasConcluidas)}" class="list-group list-group-flush">
-                            <li th:each="tarefa : ${relatorio.listaTarefasConcluidas}" class="list-group-item d-flex justify-content-between align-items-center">
+                            <li th:each="tarefa : ${relatorio.listaTarefasConcluidas}"
+                                class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
                                     <span class="fw-semibold" th:text="${tarefa.titulo}">Título da Tarefa</span>
                                     <br>
                                     <small class="text-muted">
-                                        Concluída em: <span th:text="${#temporals.format(tarefa.dataConclusao, 'dd/MM/yyyy')}"></span>
+                                        Concluída em:
+                                        <span th:text="${#temporals.format(tarefa.dataConclusao, 'dd/MM/yyyy')}"></span>
                                     </small>
                                 </div>
                                 <div>
@@ -122,17 +133,23 @@
             </div>
         </div>
 
-    </div> <div th:replace="~{fragments/footer :: scripts}"></div>
+    </div>
 
+    <!-- SCRIPTS GERAIS (Bootstrap, Chart.js, main.js) -->
+    <div th:replace="~{fragments/footer :: scripts}"></div>
+
+    <!-- SCRIPT DO GRÁFICO (usa os dados vindos do Map "relatorio") -->
     <script th:inline="javascript">
-    
-        const noPrazo =  0;
-        const atrasadas =  0;
-        
+        // Pega valores do Map relatorio. Se vier null, cai para 0.
+        const noPrazo   = /*[[${relatorio.concluidasNoPrazo}   ?: 0]]*/ 0;
+        const atrasadas = /*[[${relatorio.concluidasAtrasadas} ?: 0]]*/ 0;
+
         document.addEventListener('DOMContentLoaded', () => {
             const ctx = document.getElementById('graficoConcluidas');
-            if (ctx) { 
-                
+
+            // Garante que o canvas existe e que a lib Chart foi carregada
+            if (ctx && typeof Chart !== 'undefined') {
+
                 const getTextColor = () => {
                     return getComputedStyle(document.body).getPropertyValue('--cor-texto-principal');
                 };
@@ -145,7 +162,8 @@
                             label: 'Tarefas Concluídas',
                             data: [noPrazo, atrasadas],
                             backgroundColor: [
-                                '#198754','#fd7e14'
+                                '#198754', // verde
+                                '#fd7e14'  // laranja
                             ]
                         }]
                     },
@@ -153,19 +171,20 @@
                         plugins: {
                             legend: {
                                 labels: {
-                                    color: getTextColor() 
+                                    color: getTextColor()
                                 }
                             }
                         }
                     }
                 });
-                
+
+                // Observa mudança de tema (classe no <html>) pra atualizar a cor da legenda
                 const observer = new MutationObserver((mutationsList) => {
                     for (const mutation of mutationsList) {
                         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                             const newColor = getTextColor();
                             meuGrafico.options.plugins.legend.labels.color = newColor;
-                            meuGrafico.update(); 
+                            meuGrafico.update();
                         }
                     }
                 });

@@ -193,7 +193,7 @@ public class TarefaService {
         return getTarefaPorIdVerificandoDono(id, usuario);
     }
 
-    // --- MÉTODO ATUALIZADO PARA RETORNAR LISTA E ESTATÍSTICAS (Map<String, Object>) ---
+   
     public Map<String, Object> getRelatorioDesempenho(Integer mes, Integer ano) {
         Usuario usuario = usuarioService.getUsuarioLogado();
 
